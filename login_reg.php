@@ -1,3 +1,43 @@
+<?php
+   require_once("included_functions.php");
+   require_once("validation_functions.php");
+	
+   
+  $conn = mysqli_connect("localhost","root","personalmailram","iphoneservice") or 
+  die("Error " . mysqli_error($conn)); 
+?>
+<?php
+   
+    $message=" " ;
+   if(isset($_POST["submit"]))
+   {
+       
+   $disp_name=$_POST["username"];
+   $password=$_POST["password"];
+          $query= "select * from login";
+				$result= mysqli_query($conn,$query);
+				if($result)
+				{
+					while($row=mysqli_fetch_assoc($result))
+					{
+						if($row["disp_name"]==$disp_name) 
+						{
+                            if($row["password"]==$password)
+                            {
+                               redirect_to("index.html");
+                            }
+						
+						}
+						else
+						{
+							 $message="check the username_name or password";
+						}
+					}
+				}
+
+   }
+   
+?>
 <!DOCTYPE html>
 <!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]><html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -34,6 +74,11 @@
     </style>
 </head>
 <body>
+    <h4>
+      <?php
+          echo $message;
+        ?>
+    </h4>
     <div class="container">    
         <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">                    
             <div class="panel panel-info" >
@@ -65,12 +110,11 @@
 
                                 <div style="margin-top:10px" class="form-group">
                                     <!-- Button -->
-
-                                    <div class="col-sm-12 controls">
-                                      <a id="btn-login" href="login_reg.php" class="btn btn-success">Login  </a>
-                                      <a id="btn-fblogin" href="#" class="btn btn-primary">Login with Facebook</a>
-
-                                    </div>
+                                    
+                                    			<div class="row">
+				<div class="col-xs-12 col-md-5"><input type="submit" value="Login" name="submit" class="btn btn-primary btn-block btn-md" tabindex="7"></div>
+				<div class="col-xs-12 col-md-5"><a href="login_reg.php" class="btn btn-success btn-block btn-md">Login with Facebook</a></div>
+			</div>
                                 </div>
 
 
@@ -172,4 +216,7 @@
     <script src="js/plugins.js"></script>
     <script src="js/main.js"></script>
  </body>
-</html>   
+</html> 
+<?php
+mysqli_close($conn);
+?>

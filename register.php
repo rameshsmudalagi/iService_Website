@@ -1,3 +1,74 @@
+<?php
+   require_once("included_functions.php");
+   require_once("validation_functions.php");
+	
+   
+  $conn = mysqli_connect("localhost","root","personalmailram","iphoneservice") or 
+  die("Error " . mysqli_error($conn)); 
+?>
+<?php
+   $message=" " ;
+   if(isset($_POST["submit"]))
+   {
+       
+   $first_name=$_POST["first_name"];
+   $last_name=$_POST["last_name"];
+   $disp_name=$_POST["display_name"];
+   $mobile_number=$_POST["mobile_number"];
+   $devic_model=$_POST["device_name"];
+   $email_address=$_POST["email"];
+   $password=$_POST["password"];
+   $password_confirmation=$_POST["password_confirmation"];
+       
+       if($password==$password_confirmation)
+       {
+      $query  = "INSERT INTO register (";
+      $query .= "  first_name, last_name , disp_name, mobile_number, devic_model, email_address";
+      $query .= ") VALUES (";
+      $query .= "  '{$first_name}', '{$last_name}', '{$disp_name}','{$mobile_number}', '{$devic_model}', '{$email_address}'";
+      $query .= ")";
+        
+         $result = mysqli_query($conn, $query);
+        if ($result) {
+    // Success
+      
+       
+        
+      $query1  = "INSERT INTO login (";
+      $query1 .= "  disp_name, password";
+      $query1 .= ") VALUES (";
+      $query1 .= "  '{$disp_name}', '{$password}'";
+      $query1 .= ")";
+     
+             $result1 = mysqli_query($conn, $query1);
+            if($result1)
+            {
+              redirect_to("login_reg.php");
+              echo "Success!";
+            }
+            else
+            {
+              $message="Conatct Adminstrator problem with login";
+            }
+         
+          
+      }
+           else {
+    // Failure
+    // $message = "Subject creation failed";
+      die("Database query failed. " . mysqli_error($conn));
+      }
+       
+  }
+   else
+   {
+      $message = "password didnot match";
+   }
+}
+  
+ 
+?>
+
 <!DOCTYPE html>
 <!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]><html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -34,6 +105,9 @@
     </style>
 </head>
 <body>
+<h2>
+<?php echo $message ?>    
+</h2>
 <div class="container">
 
 <div class="row">
@@ -54,9 +128,23 @@
 					</div>
 				</div>
 			</div>
-			<div class="form-group">
+            <div class="form-group">
 				<input type="text" name="display_name" id="display_name" class="form-control input-lg" placeholder="Display Name" tabindex="3">
 			</div>
+            
+            <div class="row">
+				<div class="col-xs-12 col-sm-6 col-md-6">
+					<div class="form-group">
+                        <input type="number" name="mobile_number" id="mobile_number" class="form-control input-lg" placeholder="Mobile Number" tabindex="1">
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-6 col-md-6">
+					<div class="form-group">
+						<input type="text" name="device_name" id="device_name" class="form-control input-lg" placeholder="Device Model/Device Name" tabindex="2">
+					</div>
+				</div>
+			</div>
+            
 			<div class="form-group">
 				<input type="email" name="email" id="email" class="form-control input-lg" placeholder="Email Address" tabindex="4">
 			</div>
@@ -81,7 +169,7 @@
 			
 			<hr class="colorgraph">
 			<div class="row">
-				<div class="col-xs-12 col-md-6"><input type="submit" value="Register" class="btn btn-primary btn-block btn-lg" tabindex="7"></div>
+				<div class="col-xs-12 col-md-6"><input type="submit" value="Register" name="submit" class="btn btn-primary btn-block btn-lg" tabindex="7"></div>
 				<div class="col-xs-12 col-md-6"><a href="login_reg.php" class="btn btn-success btn-block btn-lg">Sign In</a></div>
 			</div>
 		</form>
@@ -174,3 +262,6 @@
     </script>
 </body>
 </html>
+<?php
+mysqli_close($conn);
+?>
